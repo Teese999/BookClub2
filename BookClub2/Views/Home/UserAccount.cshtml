@@ -1,0 +1,53 @@
+﻿@model BookClub2.Models.User
+
+@using BookClub2.Models;
+
+<div class="container">
+    <h1>  Привет @Model.Name   </h1>
+</div>
+<div class="containerAvaibleBooks">
+    <h2>Прочитанные книги</h2>
+    @using (var db = new BookClub2.DataContext.ApplicationDbContext())
+    {
+        <ul class="BookList">
+
+            @foreach (var BookId in db.BookReads.Where(x => x.UserId == Model.Id).Select(x => x.BookId).ToList())
+            {
+                @foreach (var item in db.Books.Where(x => x.Id == BookId).ToList())
+                {
+                    <li class="book">
+                        <p class="card__brand">@item.Author</p>
+                        <p class="card__model">@item.Title</p>
+                        <form action="~/Home/DeleteBook" class="DeleteBook" method="post">
+                            <input BookId="BookId" value="@item.Id" type="hidden" name="BookId">
+                            <input UserId="UserId" value="@Model.Id" type="hidden" name="UserId">
+                            <input type="submit" value="Удалить из прочитанного" class="submit" />
+                        </form>
+                    </li>
+                }
+
+            }
+        </ul>
+    }
+</div>
+<div class="containerAvaibleBooks">
+    <h2>Все доступные книги</h2>
+    @using (var db = new BookClub2.DataContext.ApplicationDbContext())
+    {
+        <ul class="BookList">
+            @foreach (var item in db.Books)
+            {
+                <li class="book">
+                    <p class="card__brand">@item.Author</p>
+                    <p class="card__model">@item.Title</p>
+                    <form action="~/Home/AddBook" class="AddBook" method="post">
+                        <input BookId="BookId" value="@item.Id" type="hidden" name="BookId">
+                        <input UserId="UserId" value="@Model.Id" type="hidden" name="UserId">
+                        <input type="submit" value="Добавить в прочитанное" class="submit" />
+                    </form>
+                </li>
+            }
+        </ul>
+    }
+</div>
+
